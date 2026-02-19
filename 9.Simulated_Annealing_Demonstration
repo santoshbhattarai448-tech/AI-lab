@@ -1,0 +1,22 @@
+import math
+
+
+def acceptance_probability(delta_e, temperature):
+    if delta_e < 0:
+        return 1
+    return math.exp(-delta_e / temperature)
+
+
+
+def temperature_schedule(t):
+    return max(0.01, 100 * (0.90 ** t))
+
+
+print("Temperature Effect Demonstration\n")
+
+delta_e = 5  
+
+for t in range(15):
+    T = temperature_schedule(t)
+    prob = acceptance_probability(delta_e, T)
+    print(f"Step {t} | Temp = {T:.2f} | Acceptance Prob = {prob:.4f}")
