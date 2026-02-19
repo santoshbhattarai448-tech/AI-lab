@@ -1,0 +1,26 @@
+class BlocksWorld:
+    def __init__(self, goal_state):
+        self.goal_state = goal_state 
+
+    def heuristic(self, current_state):
+        score = 0
+
+        for block in current_state:
+            current_support = current_state[block]
+            goal_support = self.goal_state.get(block)
+
+            if current_support == goal_support:
+                score += 1
+            else:
+                score -= 1
+
+        return score
+
+
+
+if __name__ == "__main__":
+    goal = {'A': 'Table', 'B': 'A', 'C': 'B'}
+    current = {'A': 'Table', 'B': 'Table', 'C': 'B'}
+
+    bw = BlocksWorld(goal)
+    print("Heuristic Value:", bw.heuristic(current))
