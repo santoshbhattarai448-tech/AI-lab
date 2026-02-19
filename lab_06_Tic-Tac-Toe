@@ -1,0 +1,46 @@
+class BlocksWorld:
+    def __init__(self, goal_state):
+        self.goal_state = goal_state
+
+
+    def get_support_chain(self, state, block):
+        chain = []
+        while block != 'Table':
+            chain.append(block)
+            block = state.get(block)
+        return chain
+
+    
+    def heuristic(self, current_state):
+        score = 0
+
+        for block in current_state:
+            current_chain = self.get_support_chain(current_state, block)
+            goal_chain = self.get_support_chain(self.goal_state, block)
+
+            if current_chain == goal_chain:
+                score += len(current_chain)
+            else:
+                score -= len(current_chain)
+
+        return score
+
+
+---------------- Example ----------------
+
+goal = {
+    'A': 'Table',
+    'B': 'A',
+    'C': 'B',
+    'D': 'C'
+}
+
+start = {
+    'A': 'Table',
+    'B': 'Table',
+    'C': 'B',
+    'D': 'C'
+}
+
+bw = BlocksWorld(goal)
+print("Heuristic Value:", bw.heuristic(start))
