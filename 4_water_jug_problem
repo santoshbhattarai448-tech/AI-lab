@@ -1,0 +1,101 @@
+from collections import deque
+import math
+
+
+class State:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return f"({self.x}, {self.y})"
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+
+
+def goal_test(state, target):
+    return state.x == target or state.y == target
+
+
+
+def get_successors(state, cap1, cap2):
+    successors = []
+
+    x, y = state.x, state.y
+
+
+    successors.append(State(cap1, y))
+
+   
+    successors.append(State(x, cap2))
+
+  
+    successors.append(State(0, y))
+
+    successors.append(State(x, 0))
+
+   
+    transfer = min(x, cap2 - y)
+    successors.append(State(x - transfer, y + transfer))
+
+   
+    transfer = min(y, cap1 - x)
+    successors.append(State(x + transfer, y - transfer))
+
+    return successors
+
+
+
+def bfs(cap1, cap2, target):
+    start = State(0, 0)
+
+    if goal_test(start, target):
+        return [start]
+
+    queue = deque([(start, [start])])
+    visited = set()
+
+    while queue:
+        current, path = queue.popleft()
+
+        if current in visited:
+            continue
+
+        visited.add(current)
+
+        for successor in get_successors(current, cap1, cap2):
+            if successor not in visited:
+                if goal_test(successor, target):
+                    return path + [successor]
+                queue.append((successor, path + [successor]))
+
+    return None
+
+
+
+def is_solvable(cap1, cap2, target):
+    return target <= max(cap1, cap2) and target % math.gcd(cap1, cap2) == 0
+
+
+
+if __name__ == "__main__":
+    cap1 = int(input("Enter capacity of Jug 1: "))
+    cap2 = int(input("Enter capacity of Jug 2: "))
+    target = int(input("Enter target amount: "))
+
+    if not is_solvable(cap1, cap2, target):
+        print("No solution possible.")
+    else:
+        solution = bfs(cap1, cap2, target)
+
+        if solution:
+            print("\nSolution Path:")
+            for step in solution:
+                print(step)
+        else:
+            print("No solution found.")
